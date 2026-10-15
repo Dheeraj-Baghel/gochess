@@ -1,0 +1,44 @@
+"use client";
+import { useState } from "react";
+import { ArrowRight, BarChart3, Check, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Gauge, Info, LoaderCircle, Sparkles, Square, Target } from "lucide-react";
+import type { ChessController } from "@/hooks/use-chess";
+import { accuracy, CLASSIFICATIONS, evalLabel, type Evaluation } from "@/lib/analysis";
+import { MoveList } from "./game-panels";
+
+export function EvaluationBar({ evaluation, orientation }: { evaluation?: Evaluation; orientation: "w" | "b" }) {
+  const white = evaluation ? 50 + 48 * Math.tanh(evaluation.cp / 450) : 50;
+  const percent = orientation === "w" ? white : 100 - white;
+  return <div className={`evaluation-bar ${orientation === "b" ? "inverted" : ""}`} title={evaluation ? `White evaluation: ${evalLabel(evaluation)}` : "Evaluation pending"}><div className="eval-white" style={{ height: `${percent}%` }}/><span>{evaluation ? evaluation.mate !== null ? `M${Math.abs(evaluation.mate)}` : Math.abs(evaluation.cp / 100).toFixed(1) : "0.0"}</span></div>;
+}
+export function ReviewNavigation({ c }: { c: ChessController }) {
+  const total = c.game?.moves.length ?? 0;
+  return <div className="review-navigation"><span>{c.reviewPly === 0 ? "Starting position" : `Move ${Math.ceil(c.reviewPly / 2)} · ${c.reviewPly % 2 ? "White" : "Black"}`}</span><div><button className="icon-button" aria-label="First position" disabled={!c.reviewPly} onClick={() => c.setReviewPly(0)}><ChevronsLeft size={19}/></button><button className="icon-button" aria-label="Previous move" disabled={!c.reviewPly} onClick={() => c.setReviewPly(p => Math.max(0, p - 1))}><ChevronLeft size={19}/></button><button className="icon-button" aria-label="Next move" disabled={c.reviewPly >= total} onClick={() => c.setReviewPly(p => Math.min(total, p + 1))}><ChevronRight size={19}/></button><button className="icon-button" aria-label="Last position" disabled={c.reviewPly >= total} onClick={() => c.setReviewPly(total)}><ChevronsRight size={19}/></button></div></div>;
+}
+export function ReviewPanel({ c, moves }: { c: ChessController; moves: string[] }) {
+  const [depth, setDepth] = useState(14);
+  const reviewed = c.analysisMoves;
+  const current = reviewed[c.reviewPly - 1];
+  const evaluation = c.reviewPly === 0 ? reviewed[0]?.before : current?.after;
+  const counts = Object.entries(CLASSIFICATIONS).map(([key, value]) => ({ key, ...value, count: reviewed.filter(m => m.classification === key).length }));
+  return <div className="review-panels">
+    <div className="card review-overview"><div className="card-title"><span><Sparkles size={18}/> Game review</span><span className="small-tag">STOCKFISH 18</span></div><div className="review-intro"><h3>There’s a story in every move.</h3><p>Find the turning points. Make the next game your best.</p></div>
+      {reviewed.length > 0 && <><div className="accuracy-scores">{(["w", "b"] as const).map(color => <div key={color}><span><i className={`side-dot ${color === "w" ? "white" : "black"}`}/>{color === "w" ? "White" : "Black"}</span><strong>{accuracy(reviewed, color) ?? "—"}<small>{accuracy(reviewed, color) !== null ? "%" : ""}</small></strong><label>Move accuracy*</label></div>)}</div><div className="class-summary">{counts.map(item => <div key={item.key}><span className="class-symbol" style={{ background: item.color }}>{item.glyph}</span><span>{item.label}</span><strong>{item.count}</strong></div>)}</div></>}
+      {!c.analyzing ? <><div className="analysis-options"><Gauge size={16}/><select aria-label="Analysis depth" value={depth} onChange={e => setDepth(Number(e.target.value))}><option value={12}>Quick · up to depth 12</option><option value={14}>Balanced · up to depth 14</option><option value={18}>Deep · up to depth 18</option></select></div><button className="primary-button full-width" disabled={!moves.length || !c.engineReady} onClick={() => void c.startAnalysis(depth)}><Sparkles size={17}/>{c.analysis ? "Analyze again" : "Analyze this game"}<ArrowRight size={17}/></button></> : <div className="analysis-progress"><div><span><LoaderCircle size={15} className="spin"/>Finding the story…</span><button className="text-button" onClick={c.stopReview}><Square size={12}/> Stop</button></div><progress max={moves.length} value={reviewed.length}/><small>{reviewed.length} of {moves.length} moves reviewed · Runs on your device</small></div>}
+      {c.analysis && <div className="analysis-complete"><Check size={13}/> Engine review complete</div>}
+    </div>
+    <div className="card move-insight"><div className="card-title"><span><Target size={17}/> Move insight</span>{evaluation && <span className="eval-score">{evalLabel(evaluation)}</span>}</div>{current ? <><div className="insight-head"><span className="large-class-symbol" style={{ background: CLASSIFICATIONS[current.classification].color }}>{CLASSIFICATIONS[current.classification].glyph}</span><div><h3>{current.san} <span>is {CLASSIFICATIONS[current.classification].label.toLowerCase() === "inaccuracy" ? "an" : "a"} {CLASSIFICATIONS[current.classification].label.toLowerCase()}{current.classification === "best" || current.classification === "excellent" || current.classification === "good" ? " move" : ""}.</span></h3><p>{current.loss} centipawns lost · Depth {current.before.depth}/{current.after.depth || "terminal"}</p></div></div><div className="best-move"><span>ENGINE’S CHOICE</span><strong>{current.bestSan}</strong><button className="text-button" onClick={() => c.setReviewPly(current.ply - 1)}>Show on board <ArrowRight size={14}/></button></div><p className="variation-label">BEST CONTINUATION BEFORE THIS MOVE</p><div className="principal-variation">{current.line.length ? current.line.map((san, i) => <span key={i}>{san}</span>) : "No continuation — terminal position."}</div></> : <div className="insight-empty"><Sparkles size={24}/><p>{c.reviewPly === 0 && reviewed.length ? `Start with ${reviewed[0].bestSan}. The engine's suggestion is marked on the board.` : c.analyzing ? "This move is still being analyzed." : "Run a review, then select a move to see the engine’s insight."}</p></div>}</div>
+    <div className="card review-moves"><div className="card-title"><span><BarChart3 size={17}/> Move by move</span><span className="muted">{moves.length} plies</span></div><MoveList moves={moves} selectedPly={c.reviewPly} onSelect={c.setReviewPly} analysisMoves={reviewed}/></div>
+    <p className="analysis-disclaimer"><Info size={14}/><span>*Knightfall accuracy is a centipawn-loss heuristic, not a rating or Chess.com’s formula. Inaccuracy ≥50 cp, mistake ≥100 cp, blunder ≥200 cp. Scores are from White’s perspective; positive favors White. Search is time-capped, and actual reached depth appears for each move.</span></p>
+  </div>;
+}
+export function EvaluationChart({ c }: { c: ChessController }) {
+  const reviewed = c.analysisMoves;
+  if (!reviewed.length) return <div className="card chart-placeholder"><BarChart3 size={25}/><div><strong>The shape of your game</strong><p>Your evaluation graph will appear as the engine reviews each move.</p></div></div>;
+  const values = [reviewed[0].before, ...reviewed.map(m => m.after)];
+  const width = 640, height = 100;
+  const points = values.map((v, i) => [i * width / Math.max(1, c.game!.moves.length), 50 - Math.tanh(v.cp / 400) * 44]);
+  const line = points.map(([x, y], i) => `${i ? "L" : "M"}${x},${y}`).join(" ");
+  const endX = points[points.length - 1][0];
+  const selected = points[Math.min(c.reviewPly, points.length - 1)];
+  return <div className="card evaluation-chart"><div className="chart-heading"><span><BarChart3 size={15}/>THE SHAPE OF YOUR GAME</span><small>White advantage ↑ · Black advantage ↓</small></div><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Move-by-move centipawn evaluation graph. Select moves in the list for accessible details." onClick={e => { const rect = e.currentTarget.getBoundingClientRect(); c.setReviewPly(Math.max(0, Math.min(reviewed.length, Math.round((e.clientX - rect.left) / rect.width * c.game!.moves.length)))); }}><path d={`${line} L${endX},100 L0,100Z`} fill="#edf2e5"/><line x1="0" y1="50" x2={width} y2="50" stroke="#cdd6c6" strokeDasharray="4 4"/><path d={line} fill="none" stroke="#6b8751" strokeWidth="2.5"/>{reviewed.map((m, i) => ["blunder", "mistake"].includes(m.classification) ? <circle key={i} cx={points[i + 1][0]} cy={points[i + 1][1]} r="4" fill={CLASSIFICATIONS[m.classification].color}><title>{m.san}: {CLASSIFICATIONS[m.classification].label}</title></circle> : null)}<line x1={selected[0]} x2={selected[0]} y1="0" y2="100" stroke="#243c30" opacity=".45"/><circle cx={selected[0]} cy={selected[1]} r="4" fill="#243c30"/></svg><div className="chart-footer"><span>Opening</span><span>Move {Math.ceil(c.reviewPly / 2)}</span><span>Endgame</span></div></div>;
+}

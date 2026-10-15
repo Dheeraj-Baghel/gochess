@@ -1,0 +1,29 @@
+"use client";
+import { useState } from "react";
+import { ArrowDownToLine, ArrowRight, Bot, FileUp, Globe2, History, Search, Sparkles, Trash2, Users } from "lucide-react";
+import { type ChessController } from "@/hooks/use-chess";
+import { fromPgn, resultCode, resultLabel, toPgn, type Game } from "@/lib/chess";
+import { deleteGame, loadHistory, saveGame } from "@/lib/storage";
+import { Modal } from "./modal";
+
+export function downloadPgn(game: Game) {
+  const url = URL.createObjectURL(new Blob([toPgn(game)], { type: "application/x-chess-pgn" }));
+  const link = document.createElement("a"); link.href = url; link.download = `knightfall-${game.id.slice(0, 8)}.pgn`; link.click(); URL.revokeObjectURL(url);
+}
+export function HistoryPage({ c, onNew }: { c: ChessController; onNew: () => void }) {
+  const [query, setQuery] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
+  const [pgn, setPgn] = useState("");
+  const [error, setError] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const games = c.history.filter(g => `${g.whiteName} ${g.blackName} ${g.mode} ${resultLabel(g.result)}`.toLowerCase().includes(query.toLowerCase()));
+  function importGame() { try { const game = fromPgn(pgn); saveGame(game); c.setHistory(loadHistory()); c.openGame(game); setImportOpen(false); } catch (e) { setError(e instanceof Error ? e.message : "Invalid PGN"); } }
+  return <div className="history-page"><div className="history-heading"><div><h2>Your chess, chapter by chapter.</h2><p>Every game is a chance to see something new.</p></div><button className="secondary-button" onClick={() => setImportOpen(true)}><FileUp size={17}/>Import PGN</button></div>
+    <div className="history-stats"><div><History size={21}/><span><strong>{c.history.length}</strong>Games saved</span></div><div><Sparkles size={21}/><span><strong>{c.history.filter(g => g.result).length}</strong>Games completed</span></div><div><Bot size={21}/><span><strong>{c.history.filter(g => g.mode === "computer").length}</strong>Against Stockfish</span></div></div>
+    <div className="card history-card"><div className="history-toolbar"><h3>Game library <span>{games.length}</span></h3><label className="search-field"><Search size={16}/><input aria-label="Search games" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search your games…"/></label></div>
+      {games.length ? <div className="history-table">{games.map(g => { const Icon = g.mode === "computer" ? Bot : g.mode === "online" ? Globe2 : Users; return <div className="history-row" key={g.id}><div className="history-mode"><Icon size={23}/></div><div className="history-game-info"><strong>{g.whiteName} <span>vs.</span> {g.blackName}</strong><small>{new Date(g.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })} · {Math.ceil(g.moves.length / 2)} moves · {g.timeControl === "none" ? "No clock" : g.timeControl}</small></div><div className="history-result"><strong>{g.result ? resultCode(g.result) : "Ongoing"}</strong><small>{g.result?.reason ?? "Saved position"}</small></div><div className="history-actions">{g.result || g.mode !== "online" ? <button className="secondary-button" onClick={() => c.openGame(g)}><Sparkles size={15}/><span>Review</span></button> : <button className="secondary-button" onClick={() => c.openGame(g, false)}>Rejoin <ArrowRight size={15}/></button>}<button className="icon-button" aria-label={`Download PGN for ${g.whiteName} vs ${g.blackName}`} onClick={() => downloadPgn(g)}><ArrowDownToLine size={17}/></button><button className="icon-button" aria-label={`Delete game ${g.id}`} onClick={() => setDeleteId(g.id)}><Trash2 size={16}/></button></div></div>; })}</div> : <div className="empty-history"><div className="empty-history-illustration"><History size={40}/></div><h3>{query ? "No games match that search." : "Your story starts on the board."}</h3><p>{query ? "Try another player, mode, or result." : "Play a game and we’ll keep it here, ready to revisit."}</p>{!query && <button className="primary-button" onClick={onNew}>Play your first game <ArrowRight size={17}/></button>}</div>}
+    </div><p className="storage-note">Your last 100 games are stored in this browser, not an account. Export PGN to keep a permanent copy or move a game to another device. Online room links remain active for 7 days.</p>
+    {importOpen && <Modal title="Bring a game to the board" onClose={() => setImportOpen(false)}><p className="modal-description">Paste a standard PGN to replay and analyze a game with Stockfish.</p><label className="input-label">PGN<textarea value={pgn} maxLength={200000} onChange={e => { setPgn(e.target.value); setError(""); }} placeholder={'[White "Player one"]\n[Black "Player two"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 *'} rows={9}/></label><label className="file-input-label"><FileUp size={16}/>Or choose a .pgn file<input type="file" accept=".pgn,.txt" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; if (file.size > 200000) { setError("Maximum file size is 200 KB."); return; } setPgn(await file.text()); }}/></label>{error && <p className="form-error" role="alert">{error}</p>}<button className="primary-button full-width" disabled={!pgn.trim()} onClick={importGame}>Import and review <ArrowRight size={17}/></button></Modal>}
+    {deleteId && <Modal title="Remove this saved game?" onClose={() => setDeleteId(null)}><p className="modal-description">This removes the game and its review from this browser. An online room is not deleted. Export the PGN first if you want to keep it.</p><div className="button-row"><button className="secondary-button" onClick={() => setDeleteId(null)}>Keep game</button><button className="danger-button" onClick={() => { deleteGame(deleteId); c.setHistory(loadHistory()); setDeleteId(null); }}>Remove game</button></div></Modal>}
+  </div>;
+}

@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-15",
+  "publicUrl": "https://knightfall-chess-three.vercel.app",
+  "alsoAvailableAt": "https://knightfall-chess-softtech10.vercel.app",
+  "functionalReleaseId": "dpl_Cz7Qk3zqD1X87vHkkPYmxEtfJpje",
+  "deploymentState": "READY",
+  "stockfishVersion": "18.0.8",
+  "engineFlavor": "lite NNUE, single-thread WebAssembly, real browser worker",
+  "database": { "provider": "Neon", "resource": "knightfall-db", "durable": true, "dedicatedToThisApplication": true },
+  "unitTests": { "passed": 47, "failed": 0, "suites": 4 },
+  "publicEndToEndTests": { "passed": 8, "failed": 0, "browser": "Chromium via installed Chrome", "duration": "2.8 minutes", "requiresVercelLogin": false },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "dependencyAudit": { "vulnerabilities": 0 },
+  "homepageAccessibility": { "tool": "axe-core", "tags": ["wcag2a", "wcag2aa"], "passedRules": 22, "violationCategories": 0, "scope": "Automated homepage scan, not full manual certification" },
+  "publicHttp200": ["/", "/api/health", "/engine/manifest.json", "/engine/stockfish-18-lite-single.js", "/engine/stockfish-18-lite-single.wasm", "/engine/LICENSE.txt", "/source/knightfall-source.tar.gz"],
+  "testCoverage": ["Real Stockfish legal replies and hints", "Checkmate and real blunder analysis", "PGN import/export and saved history", "Drag/drop and keyboard", "Four promotion choices and browser underpromotion", "Two-browser online play and seat recovery", "Spectators and live-analysis restriction", "Draw agreement", "Server authorization, illegal moves and optimistic concurrency", "Mobile viewport and overflow", "Engine-load error recovery"],
+  "limits": ["Guest history and analysis are browser-local, not account-synced", "Room links expire after 7 days", "Online state polls about every 1.8 seconds", "Vercel Hobby personal/non-commercial and Neon Free quotas apply", "Modern WebAssembly browser required for Stockfish", "Centipawn classification and accuracy are transparent Knightfall heuristics"]
+}

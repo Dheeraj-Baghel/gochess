@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.vercel/
+.env*
+!.env.example
+public/engine/
+public/source/
+.agents/
+.claude/
+skills-lock.json
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.log

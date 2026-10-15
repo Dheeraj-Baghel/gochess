@@ -1,0 +1,39 @@
+{
+  "name": "knightfall-chess",
+  "version": "1.0.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "description": "Real browser chess with Stockfish, multiplayer rooms, and post-game engine analysis.",
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "node scripts/package-source.mjs && next build",
+    "build:vercel": "node scripts/setup-db.mjs && npm run build",
+    "start": "next start --port 3100",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "postinstall": "node scripts/copy-engine.mjs",
+    "db:setup": "node --env-file=.env.local scripts/setup-db.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "chess.js": "^1.4.0",
+    "lucide-react": "^0.468.0",
+    "next": "16.4.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "stockfish": "18.0.8",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.4"
+  }
+}

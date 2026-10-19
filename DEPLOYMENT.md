@@ -8,6 +8,14 @@ Also reachable at [the account-scoped alias](https://knightfall-chess-softtech10
 Initial functional release: `dpl_Cz7Qk3zqD1X87vHkkPYmxEtfJpje`, status `READY`, deployed 2026-10-15.
 The final documentation-only release uses the same runtime source and aliases.
 
+Latest release (2026-10-19): the skak-svg piece-set update was pushed to GitHub
+(`main` commit `6a1b4f6`) and deployed with the standard Vercel CLI command. The
+production alias serves the new `/pieces/skak/` assets (SHA-256 verified against
+the repository files), `/api/health` returns 200, and the desktop Chromium
+workflow — including the check that all 32 starting pieces load from the local
+skak set — passed against the public URL. The remaining browser/API workflows
+were not rerun for this asset-only release.
+
 ### Verified on the public URL
 
 - All 47 unit tests, TypeScript, optimized production build, and dependency audit passed (zero reported vulnerabilities).

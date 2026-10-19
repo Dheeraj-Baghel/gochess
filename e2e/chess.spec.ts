@@ -16,6 +16,9 @@ test("desktop: real Stockfish replies to a legal move; takeback and hints work",
   await page.setViewportSize({ width: 1440, height: 1080 });
   await page.goto("/");
   await expect(page.getByTestId("square-e2")).toHaveAttribute("aria-label", /White pawn/);
+  const pieces = page.locator(".chessboard .chess-piece");
+  await expect(pieces).toHaveCount(32);
+  expect(await pieces.evaluateAll(images => images.every(image => image instanceof HTMLImageElement && image.complete && image.naturalWidth === 100 && image.src.includes("/pieces/skak/")))).toBe(true);
   await expect(page.locator(".engine-status")).toContainText("Stockfish 18 inside", { timeout: 45000 });
   mkdirSync("artifacts/screenshots", { recursive: true });
   await page.screenshot({ path: "artifacts/screenshots/desktop.png", fullPage: true });

@@ -26,7 +26,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:3100`. The install script copies the real single-threaded Stockfish worker and approximately 7 MB WASM payload into the application; no engine CDN or SharedArrayBuffer setup is needed. Fonts and original SVG pieces are also served locally.
+Open `http://localhost:3100`. The install script copies the real single-threaded Stockfish worker and approximately 7 MB WASM payload into the application; no engine CDN or SharedArrayBuffer setup is needed. Fonts and the vendored skak SVG pieces are also served locally.
 
 For development without a database, friend rooms use an explicitly development-only in-memory store. Production refuses room creation without durable storage; it never silently substitutes ephemeral memory for PostgreSQL.
 
@@ -48,12 +48,14 @@ npm run test:e2e
 
 Verified on 2026-10-15: **47 unit tests**, **8 real Chromium/API browser workflows against the public website**, successful production build/type checks, and **zero npm audit vulnerabilities**. An automated homepage WCAG 2 A/AA scan passed 22 checks with zero detected violations. This is not an exhaustive manual accessibility certification. See [release verification](artifacts/testing/release-verification.json) and [deployment notes](DEPLOYMENT.md).
 
+The local skak-piece update was verified on 2026-10-19 with all 47 unit tests, TypeScript, a production build, and the focused desktop Chromium workflow. That browser check asserts that all 32 starting pieces load from the local skak asset directory at their expected 100 px intrinsic size. The other seven browser/API workflows were not rerun for this asset-only change.
+
 The included Vercel configuration provisions schema on build, serves the browser engine, and connects a dedicated Neon database. See [deployment notes](DEPLOYMENT.md) for the public release, hosting limitations, production environment, test procedures, and update commands. The CI workflow is ready for a standalone repository; no GitHub connection is required for Vercel CLI releases.
 
 ## Architecture
 
 - [Chess app](src/components/app.tsx): responsive application shell and accessible controls.
-- [Chessboard](src/components/board.tsx): original vector pieces, click/touch, drag-and-drop, coordinates, legal targets, engine arrows, and keyboard operation.
+- [Chessboard](src/components/board.tsx): locally vendored skak vector pieces, click/touch, drag-and-drop, coordinates, legal targets, engine arrows, and keyboard operation.
 - [Game controller](src/hooks/use-chess.ts): gameplay, Stockfish scheduling/cancellation, clocks, room synchronization, replay, and history.
 - [Chess rules](src/lib/chess.ts): pure chess.js-based position reconstruction, move validation, results, clocks, takeback snapshots, and PGN.
 - [Engine integration](src/lib/engine.ts): serialized UCI tasks, lifecycle, error recovery, cancellation, and real per-position analysis.
@@ -89,4 +91,5 @@ Knightfall's application source is GPL-3.0-or-later; [LICENSE](LICENSE) is inclu
 - Rules: [chess.js](https://github.com/jhlywa/chess.js), BSD-2-Clause.
 - Icons: [Lucide](https://lucide.dev/license), ISC.
 - Fonts: DM Sans and Manrope via Fontsource, SIL Open Font License.
-- Branding, board interface, and chess piece SVG artwork were created for this project.
+- Chess pieces: verbatim SVGs from [MuTsunTsai/skak-svg](https://github.com/MuTsunTsai/skak-svg) at commit `aeef99c6b95cbe51990f402027349c982dc9b51f`, based on the skak set designed by Piet Tutelaers and modified by Torben Hoffmann. The upstream skak work is LPPL 1.3c; the conversion repository has no standalone license file at the pinned commit. Preserve the bundled asset notice, LPPL text, attribution, and source links when redistributing these files.
+- Knightfall's branding and board interface remain original to this project.

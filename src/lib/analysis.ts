@@ -50,7 +50,7 @@ export function pvToSan(fen: string, pv: string[], limit = 8): string[] {
 export function accuracy(moves: MoveAnalysis[], color: Color): number | null {
   const own = moves.filter(m => m.color === color);
   if (!own.length) return null;
-  // Explicitly a Knightfall heuristic, not Chess.com's proprietary accuracy formula.
+  // Explicitly a Gochess heuristic, not Chess.com's proprietary accuracy formula.
   const avg = own.reduce((sum, m) => sum + Math.min(m.loss, 1000), 0) / own.length;
   return Math.round(100 * Math.exp(-avg / 180));
 }

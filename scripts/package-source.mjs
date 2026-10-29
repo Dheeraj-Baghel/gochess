@@ -6,5 +6,5 @@ import { execFileSync } from "node:child_process";
 mkdirSync("public/source", { recursive: true });
 if (!existsSync("LICENSE")) copyFileSync("node_modules/stockfish/Copying.txt", "LICENSE");
 const files = ["src", "scripts", "tests", "e2e", ".github", "public/favicon.svg", "public/pieces/skak", "package.json", "package-lock.json", "tsconfig.json", "next-env.d.ts", "next.config.ts", "vercel.json", "vitest.config.ts", "playwright.config.ts", ".env.example", ".gitignore", ".vercelignore", "README.md", "DEPLOYMENT.md", "LICENSE"].filter(existsSync);
-execFileSync("tar", ["-czf", "public/source/knightfall-source.tar.gz", ...files], { env: { ...process.env, COPYFILE_DISABLE: "1" } });
+execFileSync("tar", ["-czf", "public/source/gochess-source.tar.gz", ...files], { env: { ...process.env, COPYFILE_DISABLE: "1" } });
 console.log("Packaged public source (no credentials, databases, or machine-specific files).");

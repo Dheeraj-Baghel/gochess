@@ -134,7 +134,7 @@ export function resultCode(result: Result | null) {
 }
 export function toPgn(game: Game): string {
   const chess = positionAt(game);
-  chess.header("Event", "Knightfall casual game", "Site", "Knightfall", "Date", new Date(game.createdAt).toISOString().slice(0, 10).replaceAll("-", "."), "White", game.whiteName, "Black", game.blackName, "Result", resultCode(game.result));
+  chess.header("Event", "Gochess casual game", "Site", "Gochess", "Date", new Date(game.createdAt).toISOString().slice(0, 10).replaceAll("-", "."), "White", game.whiteName, "Black", game.blackName, "Result", resultCode(game.result));
   if (game.result) chess.header("Termination", game.result.reason);
   const pgn = chess.pgn();
   return pgn;

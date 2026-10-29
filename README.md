@@ -1,8 +1,8 @@
-# Knightfall — a good day for a great move
+# Gochess — a good day for a great move
 
-**[Play the live website](https://knightfall-chess-three.vercel.app)** · No signup required.
+**[Play the live website](https://gochess-chess.vercel.app)** · No signup required.
 
-[GitHub source](https://github.com/Dheeraj-Baghel/knightfall-chess) · [Deployment notes](DEPLOYMENT.md)
+[GitHub source](https://github.com/Dheeraj-Baghel/gochess) · [Deployment notes](DEPLOYMENT.md)
 
 A complete browser chess app with an original sage-and-ivory interface, real Stockfish gameplay/analysis, and server-authoritative online rooms. No signup or AI API key is required. Inspired by familiar online chess workflows, not affiliated with Chess.com.
 
@@ -70,7 +70,7 @@ Centipawn scores are **always from White's perspective**: positive favors White,
 
 Move loss is the nonnegative drop in evaluation from the mover's perspective. The engine's selected move is **Best**; other moves are Excellent (<20 cp), Good (20–49 cp), Inaccuracy (50–99 cp), Mistake (100–199 cp), or Blunder (200+ cp). Forced-mate scores are represented by large signed internal values for classification. Evaluations can change with search depth, time, and device speed.
 
-Accuracy is `round(100 * exp(-mean(min(cp_loss, 1000)) / 180))`. It is a Knightfall heuristic, **not** Chess.com's proprietary accuracy formula or a strength rating. Analysis runs sequentially on-device and streams progress; it can be cancelled. A full long-game review can take several minutes on a slower phone.
+Accuracy is `round(100 * exp(-mean(min(cp_loss, 1000)) / 180))`. It is a Gochess heuristic, **not** Chess.com's proprietary accuracy formula or a strength rating. Analysis runs sequentially on-device and streams progress; it can be cancelled. A full long-game review can take several minutes on a slower phone.
 
 ## Persistence, privacy, and limits
 
@@ -85,11 +85,11 @@ Accuracy is `round(100 * exp(-mean(min(cp_loss, 1000)) / 180))`. It is a Knightf
 
 ## License and source
 
-Knightfall's application source is GPL-3.0-or-later; [LICENSE](LICENSE) is included. Every build produces a downloadable corresponding-source archive at `/source/knightfall-source.tar.gz`, with a strict file allowlist that excludes credentials, databases, dependencies, and machine-local configuration.
+Gochess's application source is GPL-3.0-or-later; [LICENSE](LICENSE) is included. Every build produces a downloadable corresponding-source archive at `/source/gochess-source.tar.gz`, with a strict file allowlist that excludes credentials, databases, dependencies, and machine-local configuration.
 
 - Engine: [Stockfish.js 18.0.8](https://github.com/nmrugg/stockfish.js/tree/v18.0.8), GPLv3. [Exact upstream source archive](https://github.com/nmrugg/stockfish.js/archive/refs/tags/v18.0.8.tar.gz), including its build instructions, is linked adjacent to the engine license in the application.
 - Rules: [chess.js](https://github.com/jhlywa/chess.js), BSD-2-Clause.
 - Icons: [Lucide](https://lucide.dev/license), ISC.
 - Fonts: DM Sans and Manrope via Fontsource, SIL Open Font License.
 - Chess pieces: verbatim SVGs from [MuTsunTsai/skak-svg](https://github.com/MuTsunTsai/skak-svg) at commit `aeef99c6b95cbe51990f402027349c982dc9b51f`, based on the skak set designed by Piet Tutelaers and modified by Torben Hoffmann. The upstream skak work is LPPL 1.3c; the conversion repository has no standalone license file at the pinned commit. Preserve the bundled asset notice, LPPL text, attribution, and source links when redistributing these files.
-- Knightfall's branding and board interface remain original to this project.
+- Gochess's branding and board interface remain original to this project.

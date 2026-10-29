@@ -6,4 +6,4 @@ await sql`CREATE TABLE IF NOT EXISTS knightfall_rooms (id text PRIMARY KEY, vers
 await sql`CREATE INDEX IF NOT EXISTS knightfall_rooms_expiry ON knightfall_rooms (expires_at)`;
 await sql`CREATE TABLE IF NOT EXISTS knightfall_limits (id text PRIMARY KEY, hits integer NOT NULL DEFAULT 1, expires_at timestamptz NOT NULL)`;
 await sql`CREATE INDEX IF NOT EXISTS knightfall_limits_expiry ON knightfall_limits (expires_at)`;
-console.log("Knightfall database is ready (rooms, optimistic locking, expiring rate limits).");
+console.log("Gochess database is ready (rooms, optimistic locking, expiring rate limits).");

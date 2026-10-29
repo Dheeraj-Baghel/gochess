@@ -1,8 +1,10 @@
-# Knightfall deployment
+# Gochess deployment
 
 ## Live website
 
-**[Open Knightfall](https://knightfall-chess-three.vercel.app)**
+**[Open Gochess](https://gochess-chess.vercel.app)**
+
+Renamed from Knightfall on 2026-10-29. The previous URL [knightfall-chess-three.vercel.app](https://knightfall-chess-three.vercel.app) remains attached to the same project so existing room links keep working. Browser storage keys and database table names keep their original `knightfall` identifiers so saved history, settings and seats survive the rename.
 
 Also reachable at [the account-scoped alias](https://knightfall-chess-softtech10.vercel.app).
 Initial functional release: `dpl_Cz7Qk3zqD1X87vHkkPYmxEtfJpje`, status `READY`, deployed 2026-10-15.
@@ -29,7 +31,7 @@ were not rerun for this asset-only release.
 
 ## Hosting
 
-- Vercel project: `knightfall-chess`, account `softtech10`, Node.js 24, Next.js 16.4.1, region `iad1`.
+- Vercel project: `gochess` (formerly `knightfall-chess`), account `softtech10`, Node.js 24, Next.js 16.4.1, region `iad1`.
 - Dedicated Neon database: `knightfall-db`, plan `free_v3`, region `iad1`. This does not reuse or modify another application's database.
 - Only Production is connected to the database. Preview deployments must use a separate testing database.
 - Vercel SSO deployment protection is disabled on this project so visitors do not need a Vercel login.
@@ -37,7 +39,7 @@ were not rerun for this asset-only release.
 
 ## GitHub repository
 
-Public source: **[Dheeraj-Baghel/knightfall-chess](https://github.com/Dheeraj-Baghel/knightfall-chess)**.
+Public source: **[Dheeraj-Baghel/gochess](https://github.com/Dheeraj-Baghel/gochess) (renamed from knightfall-chess; GitHub redirects the old URL)**.
 The repository contains application source, tests, CI, documentation, and deployment configuration.
 Private environment files, tokens, local Vercel metadata, and database credentials are excluded.
 
@@ -75,8 +77,8 @@ npm run build
 npm run test:e2e
 
 # Run the same tests against a public release, without a login or bypass header
-BASE_URL=https://knightfall-chess-three.vercel.app npm run test:e2e
-BASE_URL=https://knightfall-chess-three.vercel.app node scripts/check-accessibility.mjs
+BASE_URL=https://gochess-chess.vercel.app npm run test:e2e
+BASE_URL=https://gochess-chess.vercel.app node scripts/check-accessibility.mjs
 ```
 
 The tests cover actual WebAssembly Stockfish replies and analysis, legal move handling, special moves, checkmate, PGN, saved history, desktop/mobile rendering, private online seats, concurrent move submission, spectator restrictions, reconnects, draw acceptance, and engine-load failure recovery. API integration tests use synthetic players whose names start with `E2E`.

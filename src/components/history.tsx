@@ -8,7 +8,7 @@ import { Modal } from "./modal";
 
 export function downloadPgn(game: Game) {
   const url = URL.createObjectURL(new Blob([toPgn(game)], { type: "application/x-chess-pgn" }));
-  const link = document.createElement("a"); link.href = url; link.download = `knightfall-${game.id.slice(0, 8)}.pgn`; link.click(); URL.revokeObjectURL(url);
+  const link = document.createElement("a"); link.href = url; link.download = `gochess-${game.id.slice(0, 8)}.pgn`; link.click(); URL.revokeObjectURL(url);
 }
 export function HistoryPage({ c, onNew }: { c: ChessController; onNew: () => void }) {
   const [query, setQuery] = useState("");

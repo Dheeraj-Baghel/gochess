@@ -20,11 +20,11 @@ The upstream skak work is available here:
 https://github.com/lehoff/skak
 https://ctan.org/pkg/skak
 
-Changes in Knightfall
+Changes in Gochess
 ---------------------
 No SVG geometry or colors were changed. The files were copied into
 public/pieces/skak and are referenced by the React Piece component. This notice
-and the upstream LPPL 1.3c text were added; the Knightfall source archive was
+and the upstream LPPL 1.3c text were added; the Gochess source archive was
 updated to include this asset directory.
 
 Licensing note
@@ -32,6 +32,6 @@ Licensing note
 The skak-svg repository does not contain a standalone license file at the commit
 listed above. The upstream skak repository identifies its work as LPPL 1.3c;
 the corresponding license text is included as LICENSE-LPPL-1.3c.txt. These
-assets are kept separate from Knightfall's GPL-3.0-or-later application source.
+assets are kept separate from Gochess's GPL-3.0-or-later application source.
 Preserve this notice, the license text, and the source links when redistributing
-the assets. No upstream author or converter provides support for Knightfall.
+the assets. No upstream author or converter provides support for Gochess.
